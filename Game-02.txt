@@ -1,0 +1,13 @@
+Los patrones de arquitectura que logré investigar para responder a esta pregunta número 2 son los siguientes.
+
+Agent pattern
+Se podría utilizar el patrón agente para, manejar una estructura de componentes desacoplados.
+Debido a que uno de los componentes puede ser el intermediario de servicios para WTF
+Este intermediario se encargaría de detectar las respuesta 
+e indicaría cuando dejar de enviar solicitudes para evitar una sobrecarga y se pueda caer repetitivamente.
+
+
+Event bus pattern (ptt obser)
+El patrón de bus de eventos tiene la facilidad de utilizar 4 componentes, 
+a comparación del patrón agente, este patrón utilizaría un componente para escuchar y uno de evento.
+El evento de para detectar la sobrecarga estaría a nivel de los componentes de Canales los cuales son los intermediarios entre los que solicitan y reciben.
