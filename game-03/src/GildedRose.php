@@ -30,14 +30,14 @@ class GildedRose
 
     public function verifyQuality()
     {
-        if($this->quality > 50 && $this->name != "Sulfuras, Hand of Ragnaros")
+        if($this->quality >= 50 && $this->name != "Sulfuras, Hand of Ragnaros")
             return false;
         else
             return true;
     }
 
     public function degrades(){
-        if($this->quality != 0){
+        if($this->verifyQualityPositive()){
             if($this->sellIn < 0)
                 $this->quality = $this->quality - 2;
             else
@@ -46,38 +46,55 @@ class GildedRose
     }
 
     public function verifyQualityPositive(){
-        if($this->quality < 0)
+        if($this->quality <= 0)
             return false;
         else
             return true;
     }
 
-    public function sold()
+    public function sold($name)
     {
-//        if($this->name == "Sulfuras, Hand of Ragnaros")
-//            $this->quality = $this->quality - 1;
-//        else
-            if($this->name == "Aged Brie" || $this->name == "Sulfuras, Hand of Ragnaros"){
-                if($this->sellIn <= 10 && $this->sellIn >= 0){
-                    $this->quality = $this->quality + 2;
+        switch ($name)
+        {
+            case "Aged Brie":
+                $this->quality = $this->quality + 1;
+                if($this->sellIn < 0){
+                    if($this->verifyQuality()){
+                        $this->quality = $this->quality + 1;
+                    }
                 }
+                break;
+            case "Sulfuras, Hand of Ragnaros":
+                $this->quality = $this->quality - 1;
+                break;
+            case "Backstage passes to a TAFKAL80ETC concert":
                 if($this->sellIn <= 5 && $this->sellIn >= 0){
-                    $this->quality = $this->quality + 1;
+                    $this->quality = $this->quality + 3;
                 }
-            }
-            else if($this->name == "Conjured Mana Cake"){
+                else
+                    if($this->sellIn <= 10 && $this->sellIn >= 0){
+                        $this->quality = $this->quality + 2;
+                    }
+                    else if($this->sellIn < 0)
+                        $this->quality = 0;
+
+                break;
+            case "Conjured Mana Cake":
                 $this->quality = $this->quality - 2;
-            }
-//            else{
-//                $this->quality = $this->quality - 1;
-//            }
+                break;
+            case "normal":
+                $this->degrades();
+                break;
+        }
     }
 
-    public function verifySulfuras($quality)
+    public function verifySulfuras($quality,$sellIn)
     {
         if($this->name == "Sulfuras, Hand of Ragnaros"){
-            if($this->quality != $quality)
+            if($this->quality != $quality){
                 $this->quality =  $quality;
+                $this->sellIn =  $sellIn;
+            }
         }
     }
 
@@ -91,17 +108,19 @@ class GildedRose
     public function tick()
     {
         $quality = $this->quality;
+        $sellIn = $this->sellIn;
         if($this->verifyQualityPositive())
         {
+            $this->decreaseSellIn();
             if($this->verifyQuality())
             {
-                $this->sold();
+                $this->sold($this->name);
             }
+//            $this->degrades();
+            $this->verifySulfuras($quality,$sellIn);
+        }
+        else{
             $this->decreaseSellIn();
-            $this->degrades();
-
-
-            $this->verifySulfuras($quality);
         }
 
 

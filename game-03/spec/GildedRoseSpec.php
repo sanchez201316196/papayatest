@@ -160,7 +160,7 @@ describe('Gilded Rose', function () {
                 0 after the concert
              */
             it ('updates Backstage pass items long before the sell date', function () {
-                $item = GildedRose::of('Sulfuras, Hand of Ragnaros', 10, 11);
+                $item = GildedRose::of('Backstage passes to a TAFKAL80ETC concert', 10, 11);
 
                 $item->tick();
 
