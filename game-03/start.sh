@@ -8,7 +8,7 @@ docker run
 	--detach 
 	--interactive 
 	--tty 
-	--volume ${pwd}:/opt/project
+	--volume $(pwd):/opt/project
 	--name gilded-rose
 	gilded-rose
 
