@@ -29,19 +29,19 @@ class GildedRose
         switch ($name)
         {
             case "Aged Brie":
-                $this->ItemAgedBrie();
+                $this->UpdateAgedBrie();
                 break;
             case "Sulfuras, Hand of Ragnaros":
-                $this->ItemSulfuras();
+                $this->UpdateSulfuras();
                 break;
             case "Backstage passes to a TAFKAL80ETC concert":
-                $this->ItemBackstagePasses();
+                $this->UpdateBackstagePasses();
                 break;
             case "Conjured Mana Cake":
-                $this->ItemConjured();
+                $this->UpdateConjured();
                 break;
             case "normal":
-                $this->ItemNormal();
+                $this->UpdateNormal();
                 break;
         }
     }
@@ -50,8 +50,10 @@ class GildedRose
 
     //region Métodos para desacoplar las acciones generales del sistema
 
+
+
     //Método encargado de verificar si la calidad se encuentra excedida, para todos los ítems en excepción de los "Ítems Sulfuros"
-    public function verifyMaxQuality()
+    public function validateMaxQuality()
     {
         if($this->quality >= 50 && $this->name != "Sulfuras, Hand of Ragnaros")
             return false;
@@ -60,7 +62,7 @@ class GildedRose
     }
 
     //Método encargado de verificar si la calidad es mayor a 0, para todos los ítems
-    public function verifyQualityPositive(){
+    public function validateQualityPositive(){
         if($this->quality <= 0)
             return false;
         else
@@ -68,19 +70,29 @@ class GildedRose
     }
 
     //Método encargado de verificar sí la fecha de caducidad de un ítem ya pasó
-    public function verifySellInNegative(){
+    public function validateSellInNegative(){
         if($this->sellIn < 0)
             return true;
         else
             return false;
     }
 
+
+
+    // Método encargado de decrecer el valor de la calidad de cada item,
+    // por defecto el valor de decremento es 1
+    // ( puede variar dependiendo de la implementación que se haga )
+    public function decreaseQuality($val = 1)
+    {
+        $this->quality = $this->quality - ($val);
+    }
+
     // Método encargado de incrementar la calidad de los items,
     // por defecto el valor de incremento es 1
     // ( puede variar dependiendo de la implementación que se haga )
-    public function qualityIncreases($val = 1)
+    public function increaseQuality($val = 1)
     {
-        $this->quality = $this->quality + (1*$val);
+        $this->quality = $this->quality + ($val);
     }
 
     // Método encargado de decrecer el valor de los días de cada item,
@@ -88,73 +100,68 @@ class GildedRose
     // ( puede variar dependiendo de la implementación que se haga )
     public function decreaseSellIn($val = 1)
     {
-        $this->sellIn = $this->sellIn - (1*$val);
+        $this->sellIn = $this->sellIn - ($val);
     }
 
-    // Método encargado de decrecer el valor de la calidad de cada item,
-    // por defecto el valor de decremento es 1
-    // ( puede variar dependiendo de la implementación que se haga )
-    public function decreaseQuality($val = 1)
-    {
-        $this->quality = $this->quality - (1*$val);
-    }
+
 
     // Método encargado de actualizar valores de calidad de cada item,
     // ( puede variar dependiendo de la implementación que se haga )
     public function degrades($val = 1){
-        if($this->verifyQualityPositive()){
-            if($this->verifySellInNegative())
+        if($this->validateQualityPositive()){
+            if($this->validateSellInNegative())
                 $this->decreaseQuality(2*$val);
             else
                 $this->decreaseQuality($val);
         }
     }
 
+
     //endregion
 
     //region Actualizaciones de los items/productos de la Posada Gilded Rose
 
     //Item Normal
-    private function ItemNormal()
+    private function UpdateNormal()
     {
         $this->decreaseSellIn();
         $this->degrades();
     }
 
     //Item Aged Brie
-    private function ItemAgedBrie()
+    private function UpdateAgedBrie()
     {
         $this->decreaseSellIn();
 
-        $this->qualityIncreases();
+        $this->increaseQuality();
 
-        if($this->verifySellInNegative())
-            if($this->verifyMaxQuality())
-                $this->qualityIncreases();
+        if($this->validateSellInNegative())
+            if($this->validateMaxQuality())
+                $this->increaseQuality();
 
     }
 
     //Item Sulfuras
-    private function ItemSulfuras()
+    private function UpdateSulfuras()
     {
         $this->decreaseSellIn();
         $this->decreaseQuality();
     }
 
     //Item Backstage Passes
-    private function ItemBackstagePasses()
+    private function UpdateBackstagePasses()
     {
         if($this->sellIn <= 5 && $this->sellIn >= 0){
-            $this->qualityIncreases(3);
+            $this->increaseQuality(3);
         }
         else
             if($this->sellIn <= 10 && $this->sellIn >= 0){
-                $this->qualityIncreases(2);
+                $this->increaseQuality(2);
             }
             else if($this->sellIn > 10){
-                $this->qualityIncreases();
+                $this->increaseQuality();
             }
-            else if($this->verifySellInNegative())
+            else if($this->validateSellInNegative())
                 $this->quality = 0;
 
         $this->decreaseSellIn();
@@ -163,7 +170,7 @@ class GildedRose
     }
 
     //Item Conjured
-    private function ItemConjured()
+    private function UpdateConjured()
     {
         $this->decreaseSellIn();
         $this->degrades(2);
@@ -175,7 +182,7 @@ class GildedRose
     //region Métodos de verificación para los ítems "Sulfuras" y "Backstage Passes"
 
     //Método para actualizar valores de calidad y tiempo de caducidad, de los items Sulfuras, por ser un item legendario.
-    public function verifySulfuras($quality,$sellIn)
+    public function validateSulfuras($quality,$sellIn)
     {
         if($this->name == "Sulfuras, Hand of Ragnaros"){
             if($this->quality != $quality){
@@ -186,10 +193,10 @@ class GildedRose
     }
 
     //Método para actualizar valores de calidad, de los items Backstage Passes, luego del concierto.
-    public function verifyAfterTheConcert()
+    public function validateAfterTheConcert()
     {
         if($this->name == "Backstage passes to a TAFKAL80ETC concert"){
-            if($this->verifySellInNegative()){
+            if($this->validateSellInNegative()){
                 $this->quality =  0;
             }
         }
@@ -214,16 +221,16 @@ class GildedRose
 
         $sellIn = $this->sellIn;
 
-        if($this->verifyQualityPositive())
+        if($this->validateQualityPositive())
         {
-            if($this->verifyMaxQuality())
+            if($this->validateMaxQuality())
             {
                 $this->sold($this->name);
             }else{
                 $this->decreaseSellIn();
             }
-            $this->verifyAfterTheConcert();
-            $this->verifySulfuras($quality,$sellIn);
+            $this->validateAfterTheConcert();
+            $this->validateSulfuras($quality,$sellIn);
 
         }
         else{
