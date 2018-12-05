@@ -22,6 +22,8 @@ class GildedRose
     }
 
 
+    //region Método encargado de realizar las ventas y actualizar el inventario de los items, día a día.
+
     public function sold($name)
     {
         switch ($name)
@@ -44,7 +46,11 @@ class GildedRose
         }
     }
 
+    //endregion
 
+    //region Métodos para desacoplar las acciones generales del sistema
+
+    //Método encargado de verificar si la calidad se encuentra excedida, para todos los ítems en excepción de los "Ítems Sulfuros"
     public function verifyMaxQuality()
     {
         if($this->quality >= 50 && $this->name != "Sulfuras, Hand of Ragnaros")
@@ -53,6 +59,7 @@ class GildedRose
             return true;
     }
 
+    //Método encargado de verificar si la calidad es mayor a 0, para todos los ítems
     public function verifyQualityPositive(){
         if($this->quality <= 0)
             return false;
@@ -60,6 +67,7 @@ class GildedRose
             return true;
     }
 
+    //Método encargado de verificar sí la fecha de caducidad de un ítem ya pasó
     public function verifySellInNegative(){
         if($this->sellIn < 0)
             return true;
@@ -67,21 +75,32 @@ class GildedRose
             return false;
     }
 
+    // Método encargado de incrementar la calidad de los items,
+    // por defecto el valor de incremento es 1
+    // ( puede variar dependiendo de la implementación que se haga )
     public function qualityIncreases($val = 1)
     {
         $this->quality = $this->quality + (1*$val);
     }
 
+    // Método encargado de decrecer el valor de los días de cada item,
+    // por defecto el valor de decremento es 1
+    // ( puede variar dependiendo de la implementación que se haga )
     public function decreaseSellIn($val = 1)
     {
         $this->sellIn = $this->sellIn - (1*$val);
     }
 
+    // Método encargado de decrecer el valor de la calidad de cada item,
+    // por defecto el valor de decremento es 1
+    // ( puede variar dependiendo de la implementación que se haga )
     public function decreaseQuality($val = 1)
     {
         $this->quality = $this->quality - (1*$val);
     }
 
+    // Método encargado de actualizar valores de calidad de cada item,
+    // ( puede variar dependiendo de la implementación que se haga )
     public function degrades($val = 1){
         if($this->verifyQualityPositive()){
             if($this->verifySellInNegative())
@@ -91,14 +110,18 @@ class GildedRose
         }
     }
 
+    //endregion
 
+    //region Actualizaciones de los items/productos de la Posada Gilded Rose
 
+    //Item Normal
     private function ItemNormal()
     {
         $this->decreaseSellIn();
         $this->degrades();
     }
 
+    //Item Aged Brie
     private function ItemAgedBrie()
     {
         $this->decreaseSellIn();
@@ -111,12 +134,14 @@ class GildedRose
 
     }
 
+    //Item Sulfuras
     private function ItemSulfuras()
     {
         $this->decreaseSellIn();
         $this->decreaseQuality();
     }
 
+    //Item Backstage Passes
     private function ItemBackstagePasses()
     {
         if($this->sellIn <= 5 && $this->sellIn >= 0){
@@ -137,6 +162,7 @@ class GildedRose
 
     }
 
+    //Item Conjured
     private function ItemConjured()
     {
         $this->decreaseSellIn();
@@ -144,7 +170,11 @@ class GildedRose
 
     }
 
+    //endregion
 
+    //region Métodos de verificación para los ítems "Sulfuras" y "Backstage Passes"
+
+    //Método para actualizar valores de calidad y tiempo de caducidad, de los items Sulfuras, por ser un item legendario.
     public function verifySulfuras($quality,$sellIn)
     {
         if($this->name == "Sulfuras, Hand of Ragnaros"){
@@ -155,17 +185,27 @@ class GildedRose
         }
     }
 
+    //Método para actualizar valores de calidad, de los items Backstage Passes, luego del concierto.
     public function verifyAfterTheConcert()
     {
         if($this->name == "Backstage passes to a TAFKAL80ETC concert"){
-            if($this->sellIn < 0){
+            if($this->verifySellInNegative()){
                 $this->quality =  0;
             }
         }
     }
 
+    //endregion
 
+    //region Items de la Posada de Gilded Rose
 
+    //Aged Brie
+    //Sulfuras, Hand of Ragnaros
+    //Backstage passes to a TAFKAL80ETC concert
+    //Conjured Mana Cake
+    //normal
+
+    //endregion
 
 
     public function tick()
