@@ -24,7 +24,7 @@ class GildedRose
 
     //region Método encargado de realizar las ventas y actualizar el inventario de los items, día a día.
 
-    public function sold($name)
+    private function sold($name)
     {
         switch ($name)
         {
@@ -53,7 +53,7 @@ class GildedRose
 
 
     //Método encargado de verificar si la calidad se encuentra excedida, para todos los ítems en excepción de los "Ítems Sulfuros"
-    public function validateMaxQuality()
+    private function validateMaxQuality()
     {
         if($this->quality >= 50 && $this->name != "Sulfuras, Hand of Ragnaros")
             return false;
@@ -62,7 +62,7 @@ class GildedRose
     }
 
     //Método encargado de verificar si la calidad es mayor a 0, para todos los ítems
-    public function validateQualityPositive(){
+    private function validateQualityPositive(){
         if($this->quality <= 0)
             return false;
         else
@@ -70,7 +70,7 @@ class GildedRose
     }
 
     //Método encargado de verificar sí la fecha de caducidad de un ítem ya pasó
-    public function validateSellInNegative(){
+    private function validateSellInNegative(){
         if($this->sellIn < 0)
             return true;
         else
@@ -82,7 +82,7 @@ class GildedRose
     // Método encargado de decrecer el valor de la calidad de cada item,
     // por defecto el valor de decremento es 1
     // ( puede variar dependiendo de la implementación que se haga )
-    public function decreaseQuality($val = 1)
+    private function decreaseQuality($val = 1)
     {
         $this->quality = $this->quality - ($val);
     }
@@ -90,7 +90,7 @@ class GildedRose
     // Método encargado de incrementar la calidad de los items,
     // por defecto el valor de incremento es 1
     // ( puede variar dependiendo de la implementación que se haga )
-    public function increaseQuality($val = 1)
+    private function increaseQuality($val = 1)
     {
         $this->quality = $this->quality + ($val);
     }
@@ -98,7 +98,7 @@ class GildedRose
     // Método encargado de decrecer el valor de los días de cada item,
     // por defecto el valor de decremento es 1
     // ( puede variar dependiendo de la implementación que se haga )
-    public function decreaseSellIn($val = 1)
+    private function decreaseSellIn($val = 1)
     {
         $this->sellIn = $this->sellIn - ($val);
     }
@@ -107,7 +107,7 @@ class GildedRose
 
     // Método encargado de actualizar valores de calidad de cada item,
     // ( puede variar dependiendo de la implementación que se haga )
-    public function degrades($val = 1){
+    private function degrades($val = 1){
         if($this->validateQualityPositive()){
             if($this->validateSellInNegative())
                 $this->decreaseQuality(2*$val);
@@ -182,7 +182,7 @@ class GildedRose
     //region Métodos de verificación para los ítems "Sulfuras" y "Backstage Passes"
 
     //Método para actualizar valores de calidad y tiempo de caducidad, de los items Sulfuras, por ser un item legendario.
-    public function validateSulfuras($quality,$sellIn)
+    private function validateSulfuras($quality,$sellIn)
     {
         if($this->name == "Sulfuras, Hand of Ragnaros"){
             if($this->quality != $quality){
@@ -193,7 +193,7 @@ class GildedRose
     }
 
     //Método para actualizar valores de calidad, de los items Backstage Passes, luego del concierto.
-    public function validateAfterTheConcert()
+    private function validateAfterTheConcert()
     {
         if($this->name == "Backstage passes to a TAFKAL80ETC concert"){
             if($this->validateSellInNegative()){
